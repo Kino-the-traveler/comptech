@@ -1,0 +1,2 @@
+include ':comptech'
+rootProject.name = "comptech"
