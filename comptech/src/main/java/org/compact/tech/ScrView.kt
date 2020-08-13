@@ -3,7 +3,10 @@ package org.compact.tech
 import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 
 class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attrs) {
     var preferences = ScrPreferences(context)
@@ -17,7 +20,7 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     fun startIfSaved(): Boolean {
         preferences.getLink()?.let { link ->
             preferences.getCookies()?.let {
-                CookieManager.getInstance().setCookie(url, it)
+                CookieManager.getInstance().setCookie(link, it)
             }
             loadUrl(link)
             return true
