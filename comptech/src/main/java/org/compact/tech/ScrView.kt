@@ -131,7 +131,12 @@ abstract class ScrBaseView(c: Context, a: AttributeSet) : WebView(c, a) {
             domStorageEnabled = true
         }
 
-        webChromeClient = WebChromeClient()
+        webChromeClient = object : WebChromeClient() {
+            override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+                if (!BuildConfig.DEBUG) return true
+                return super.onConsoleMessage(consoleMessage)
+            }
+        }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             val cookieManager = CookieManager.getInstance()
