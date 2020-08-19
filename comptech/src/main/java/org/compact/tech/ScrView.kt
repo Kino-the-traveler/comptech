@@ -116,6 +116,7 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
                 error: WebResourceError?
             ) {
                 onError?.invoke(error.toString())
+                loadUrl("file:///android_asset/nointernet.html")
             }
         }
     }
