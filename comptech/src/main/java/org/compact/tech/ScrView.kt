@@ -14,7 +14,6 @@ class ScrPreferences(context: Context) {
     private val prId = "prId"
     private val cookies = "cookies"
     private val link = "link"
-
     private val preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
 
     fun savePreland(prId: String) = preferences.edit().putString(this.prId, prId).apply()
@@ -31,6 +30,8 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     var preferences = ScrPreferences(context)
     var query: String? = null
     var preland: String? = preferences.getPreland()
+    private val noInternetPagePath = "file:///android_asset/nointernet.html"
+
     private var onError: ((String) -> Unit)? = null
 
     init {
@@ -90,7 +91,9 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
                     Uri.parse(url).getQueryParameter("cust_offer_id")?.let { query = it }
                     return false
                 } else {
-                    loadUrl("file:///android_asset/nointernet.html")
+                    if (url.toString() != noInternetPagePath) {
+                        loadUrl("file:///android_asset/nointernet.html")
+                    }
                     return false
                 }
             }
@@ -116,7 +119,9 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
                 error: WebResourceError?
             ) {
                 onError?.invoke(error.toString())
-                loadUrl("file:///android_asset/nointernet.html")
+                if (url.toString() != noInternetPagePath) {
+                    loadUrl("file:///android_asset/nointernet.html")
+                }
             }
         }
     }
