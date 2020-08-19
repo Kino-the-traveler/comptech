@@ -2,6 +2,7 @@ package org.compact.tech
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
@@ -30,6 +31,7 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     var preferences = ScrPreferences(context)
     var query: String? = null
     var preland: String? = preferences.getPreland()
+    private var onError: ((String) -> Unit)? = null
 
     init {
         setClient()
@@ -52,6 +54,10 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
 
     fun setAskListener(askListener: Listener) {
         addJavascriptInterface(askListener, "android")
+    }
+
+    fun setOnError(f: (String) -> Unit) {
+        onError = f
     }
 
     fun save() {
@@ -80,8 +86,13 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     private fun setClient() {
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(v: WebView?, r: WebResourceRequest?): Boolean {
-                Uri.parse(url).getQueryParameter("cust_offer_id")?.let { query = it }
-                return false
+                if (isConnected()) {
+                    Uri.parse(url).getQueryParameter("cust_offer_id")?.let { query = it }
+                    return false
+                } else {
+                    loadUrl("file:///android_asset/nointernet.html")
+                    return true
+                }
             }
 
             override fun onPageFinished(v: WebView?, url: String?) {
@@ -98,7 +109,20 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
 
                 preland?.let { initMainFunc(it) } ?: query?.let { initMainFunc(it) }
             }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                onError?.invoke(error.toString())
+            }
         }
+    }
+
+    fun isConnected(): Boolean {
+        val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        return conn?.activeNetworkInfo?.isConnected ?: false
     }
 
     open class Listener {
