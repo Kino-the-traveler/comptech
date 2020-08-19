@@ -87,15 +87,8 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
     private fun setClient() {
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(v: WebView?, r: WebResourceRequest?): Boolean {
-                if (isConnected()) {
-                    Uri.parse(url).getQueryParameter("cust_offer_id")?.let { query = it }
-                    return false
-                } else {
-                    if (url.toString() != noInternetPagePath) {
-                        loadUrl("file:///android_asset/nointernet.html")
-                    }
-                    return false
-                }
+                Uri.parse(url).getQueryParameter("cust_offer_id")?.let { query = it }
+                return false
             }
 
             override fun onPageFinished(v: WebView?, url: String?) {
