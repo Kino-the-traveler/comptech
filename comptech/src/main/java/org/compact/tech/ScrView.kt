@@ -91,7 +91,7 @@ class ScrView(context: Context, attrs: AttributeSet) : ScrBaseView(context, attr
                     return false
                 } else {
                     loadUrl("file:///android_asset/nointernet.html")
-                    return true
+                    return false
                 }
             }
 
